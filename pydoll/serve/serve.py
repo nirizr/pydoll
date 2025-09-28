@@ -1,12 +1,14 @@
-# pydoll/serve.py
+from typing import Any, Dict, List
+
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
-from typing import Any, Dict, List
-from .browser import Chrome
-from .constants import Key
-from .schemas import CrawlRequest, Step  # ⬅️ import from new file
 
-app = FastAPI(title="Pydoll API")
+from ..browser import Chrome
+from ..constants import Key
+
+from .schemas import CrawlRequest, Step
+
+app = FastAPI(title="Pydoll API", docs_url="/docs", redoc_url="/redoc")  # explicitly define docs URLs
 
 async def execute_steps(tab, steps: List[Step]) -> List[Any]:
     outputs = []
@@ -105,3 +107,10 @@ async def crawl(req: CrawlRequest):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/schema")
+async def schema():
+    """
+    Returns the OpenAPI schema for the API in JSON format.
+    """
+    return JSONResponse(content=app.openapi())
