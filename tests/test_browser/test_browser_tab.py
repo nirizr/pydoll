@@ -23,6 +23,7 @@ from pydoll.exceptions import (
     WaitElementTimeout,
     NetworkEventsNotEnabled,
     InvalidScriptWithElement,
+    TopLevelTargetRequired,
 )
 
 @pytest_asyncio.fixture
@@ -423,6 +424,14 @@ class TestTabScreenshotAndPDF:
             assert command['method'] == 'Page.captureScreenshot'
             assert command['params']['captureBeyondViewport'] is True
             assert result == screenshot_data
+
+    @pytest.mark.asyncio
+    async def test_take_screenshot_in_iframe_raises_top_level_required(self, tab):
+        """Tab.take_screenshot must be called on top-level targets; iframe Tab raises."""
+        # Simulate CDP returning no image data (missing 'data' key) for non top-level target
+        with patch.object(tab, '_execute_command', AsyncMock(return_value={'result': {}})):
+            with pytest.raises(TopLevelTargetRequired):
+                await tab.take_screenshot(path=None, as_base64=True)
 
     @pytest.mark.asyncio
     async def test_print_to_pdf_to_file(self, tab, tmp_path):

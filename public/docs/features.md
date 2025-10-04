@@ -57,6 +57,9 @@ Capture visual content from web pages:
 - **High-Quality PDF Export**: Generate PDF documents from web pages
 - **Custom Formatting**: Coming soon!
 
+!!! note "Screenshots in iFrames and top-level targets"
+    `tab.take_screenshot()` only works on top-level targets. When working inside an `iframe` (using `await tab.get_frame(iframe_element)`), Chrome's `Page.captureScreenshot` cannot capture the subtarget directly. In these scenarios, use `WebElement.take_screenshot()` instead—it captures via viewport and works inside iframes.
+
 ## Remote Connections and Hybrid Automation
 
 ### Connect to a running browser via WebSocket
@@ -525,12 +528,8 @@ async def main():
     async with Chrome() as browser:
         # Start the browser once
         await browser.start()
-        
-        # Create partial function with browser parameter
-        scrape_with_browser = partial(scrape_page, browser)
-        
         # Process all URLs concurrently using the same browser
-        results = await asyncio.gather(*(scrape_with_browser(url) for url in urls))
+        results = await asyncio.gather(*(scrape_page(browser, url) for url in urls))
     
     # Print results
     for result in results:

@@ -1,3 +1,10 @@
+## 2.8.2 (2025-10-03)
+
+### Fix
+
+- implement proxy authentication handling for browser tabs
+- map exception when try to take screenshot of an iframe
+
 ## 2.8.1 (2025-09-27)
 
 ### Fix
