@@ -166,10 +166,14 @@ class Browser(ABC):  # noqa: PLR0904
         await self._verify_browser_running()
         await self._configure_proxy(proxy_config[0], proxy_config[1])
 
-        valid_tab_id = await self._get_valid_tab_id(await self.get_targets())
-        tab = Tab(self, target_id=valid_tab_id, connection_port=self._connection_port)
-        self._tabs_opened[valid_tab_id] = tab
-        return tab
+        targets = await self.get_targets()
+        if targets:
+            valid_tab_id = await self._get_valid_tab_id(targets)
+            tab = Tab(self, target_id=valid_tab_id, connection_port=self._connection_port)
+            self._tabs_opened[valid_tab_id] = tab
+            return tab
+        else:
+            return await self.new_tab()
 
     async def stop(self):
         """

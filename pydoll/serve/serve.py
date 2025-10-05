@@ -1,9 +1,12 @@
 from typing import Any, Dict, List
 
+import os
+
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 
 from ..browser import Chrome
+from ..browser.options import ChromiumOptions as Options
 from ..constants import Key
 
 from .schemas import CrawlRequest, Step
@@ -89,13 +92,19 @@ async def execute_steps(tab, steps: List[Step]) -> List[Any]:
     return outputs
 
 async def crawl_handler(request: CrawlRequest) -> Dict[str, Any]:
-    async with Chrome() as browser:
+    options = Options()
+    options.headless = True
+    options.start_timeout = 30
+    options.binary_location = os.getenv('CHROME_BIN')
+    options.add_argument('--no-sandbox')
+
+    async with Chrome(options=options) as browser:
         tab = await browser.start()
         await tab.go_to(request.url)
         outputs = []
         if request.steps:
             outputs = await execute_steps(tab, request.steps)
-        html = await tab.content()
+        html = await tab.text
         return {"url": request.url, "html": html, "outputs": outputs}
 
 @app.post("/crawl")

@@ -45,10 +45,10 @@ def main():
     if args.command == "serve":
         import uvicorn
         uvicorn.run(
-            "pydoll.serve:app",
+            "pydoll.serve.serve:app",
             host=args.host,
             port=args.port,
-            reload=args.reload,
+            reload=args.reload
         )
     else:
         parser.print_help()
