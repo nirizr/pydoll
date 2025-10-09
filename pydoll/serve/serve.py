@@ -24,12 +24,9 @@ async def execute_steps(tab, steps: List[Step]) -> List[Any]:
                 await element.insert_text(step.insert_text)
             if step.click:
                 await element.click()
-
-        elif action == "press_key":
-            if not step.key:
-                raise HTTPException(status_code=400, detail="press_key requires 'key'")
-            key = getattr(Key, step.key, step.key)
-            await tab.press_keyboard_key(key)
+            if step.key:
+                key = getattr(Key, step.key, step.key)
+                await element.press_keyboard_key(key)
 
         elif action == "wait_for":
             await tab.find(**(step.by.dict(exclude_none=True) if step.by else {}))
@@ -104,7 +101,7 @@ async def crawl_handler(request: CrawlRequest) -> Dict[str, Any]:
         outputs = []
         if request.steps:
             outputs = await execute_steps(tab, request.steps)
-        html = await tab.text
+        html = await tab.page_source
         return {"url": request.url, "html": html, "outputs": outputs}
 
 @app.post("/crawl")

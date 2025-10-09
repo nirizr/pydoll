@@ -55,7 +55,8 @@ class BrowserProcessManager:
     @staticmethod
     def _default_process_creator(command: list[str]) -> subprocess.Popen:
         """Create browser process with output capture to prevent console clutter."""
-        return subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        #return subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        return subprocess.Popen(command)
 
     def stop_process(self):
         """

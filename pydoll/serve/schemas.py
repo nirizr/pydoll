@@ -74,7 +74,7 @@ class Step(BaseModel):
         None, description="Optional HTTP headers for 'request' action.",
         example={"Authorization": "Bearer token"}
     )
-    json: Optional[Dict[str, Any]] = Field(
+    json_payload: Optional[Dict[str, Any]] = Field(
         None, description="Optional JSON payload for 'request' action.", example={"param": "value"}
     )
     attribute: Optional[str] = Field(

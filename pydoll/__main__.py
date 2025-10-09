@@ -15,7 +15,8 @@ def main():
     parser.add_argument(
         "-v", "--version",
         action="version",
-        version=f"pydoll {pkg_version('pydoll')}",
+        #version=f"pydoll {pkg_version('pydoll')}",
+        version=f"pydoll 1111",
         help="Show Pydoll version and exit"
     )
 
